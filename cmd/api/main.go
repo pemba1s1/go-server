@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	"github.com/pemba1s1/go-server/handlers"
 )
 
 func main() {
@@ -28,6 +29,11 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
+
+	v1Rounter := chi.NewRouter()
+	v1Rounter.Get("/health", handlers.HandlerReadiness)
+
+	router.Mount("/v1", v1Rounter)
 
 	srv := http.Server{
 		Handler: router,
