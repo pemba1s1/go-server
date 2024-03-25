@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/pemba1s1/go-server/internal/database"
 	"github.com/pemba1s1/go-server/utils"
@@ -90,11 +91,22 @@ func (apiCfg *ApiConfig) HandlerUserLogin(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    user.ID.String(),
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+	const SECRET_KEY = "secret"
+	token, err := claims.SignedString([]byte(SECRET_KEY))
+	if err != nil {
+		utils.RespondWithError(w, 400, fmt.Sprintln("Something went wrong"))
+		return
+	}
+
 	utils.RespondWithJson(w, 200, struct {
 		UserName string `json:"user_name"`
 		Token    string `json:"token"`
 	}{
 		UserName: user.UserName,
-		Token:    "token",
+		Token:    token,
 	})
 }
