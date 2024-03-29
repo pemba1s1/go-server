@@ -49,6 +49,7 @@ func main() {
 
 	v1Router := chi.NewRouter()
 	v1Router.Group(func(r chi.Router) {
+		r.Get("/{username}", apiCfg.HandlerGetUserByUserName)
 		r.Get("/health", handlers.HandlerReadiness)
 		r.Get("/error", handlers.HandlerError)
 		r.Post("/user", apiCfg.HandlerCreateUser)

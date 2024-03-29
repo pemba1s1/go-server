@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/pemba1s1/go-server/internal/database"
@@ -110,4 +111,15 @@ func (apiCfg *ApiConfig) HandlerUserLogin(w http.ResponseWriter, r *http.Request
 		UserName: user.UserName,
 		Token:    token,
 	})
+}
+
+func (apiCfg *ApiConfig) HandlerGetUserByUserName(w http.ResponseWriter, r *http.Request) {
+	userName := chi.URLParam(r, "username")
+	user, error := apiCfg.DB.GetUserFromUserName(r.Context(), userName)
+
+	if error != nil {
+		utils.RespondWithError(w, 400, fmt.Sprintf("Couldn't Fetch User: %v", error))
+		return
+	}
+	utils.RespondWithJson(w, 200, user)
 }
