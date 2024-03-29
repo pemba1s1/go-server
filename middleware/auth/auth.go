@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/pemba1s1/go-server/internal/auth"
@@ -19,7 +20,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Parse the JWT token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Provide the key or secret used to sign the token
-			return []byte("secret"), nil
+			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 
 		if err != nil || !token.Valid {

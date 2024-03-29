@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -96,7 +97,7 @@ func (apiCfg *ApiConfig) HandlerUserLogin(w http.ResponseWriter, r *http.Request
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 	const SECRET_KEY = "secret"
-	token, err := claims.SignedString([]byte(SECRET_KEY))
+	token, err := claims.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		utils.RespondWithError(w, 400, fmt.Sprintln("Something went wrong"))
 		return
