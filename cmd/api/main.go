@@ -52,6 +52,8 @@ func main() {
 	v1Router.Post("/user", apiCfg.HandlerCreateUser)
 	v1Router.Post("/login", apiCfg.HandlerUserLogin)
 
+	// v1Router.Get("/protected", middleware.AuthMiddleware())
+
 	router.Mount("/v1", v1Router)
 
 	srv := http.Server{
