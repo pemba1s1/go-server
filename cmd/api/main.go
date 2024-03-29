@@ -13,6 +13,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/pemba1s1/go-server/handlers"
 	"github.com/pemba1s1/go-server/internal/database"
+	middleware "github.com/pemba1s1/go-server/middleware/auth"
 )
 
 func main() {
@@ -47,12 +48,16 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/health", handlers.HandlerReadiness)
-	v1Router.Get("/error", handlers.HandlerError)
-	v1Router.Post("/user", apiCfg.HandlerCreateUser)
-	v1Router.Post("/login", apiCfg.HandlerUserLogin)
-
-	// v1Router.Get("/protected", middleware.AuthMiddleware())
+	v1Router.Group(func(r chi.Router) {
+		r.Get("/health", handlers.HandlerReadiness)
+		r.Get("/error", handlers.HandlerError)
+		r.Post("/user", apiCfg.HandlerCreateUser)
+		r.Post("/login", apiCfg.HandlerUserLogin)
+	})
+	v1Router.Group(func(r chi.Router) {
+		r.Use(middleware.AuthMiddleware())
+		r.Get("/protected", handlers.HandlerReadiness)
+	})
 
 	router.Mount("/v1", v1Router)
 
